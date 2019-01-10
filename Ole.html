@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<html>
+	<head>
+		<title>Ole</title>
+	</head>
+	<body onload="main()" onmousemove="mouse_pos(event)">
+        <canvas id="canvas" width="1200px" height="500px"></canvas>
+        <p id="test"></p>
+        <script>
+            class TB{
+                constructor(tekst,farge, size,peker){
+                    this.tekst = tekst;
+                    this.farge = "rgba("+Math.floor(Math.random()*205+50)+","+Math.floor(Math.random()*205+50)+","+Math.floor(Math.random()*205+50)+",1)";
+                    this.size  = size;
+                    this.peker = peker;
+                }
+                skriv(pos){
+                    let canvas = document.getElementById("canvas");
+                    let ctx = canvas.getContext("2d");
+                    ctx.fillStyle = this.farge;
+                    ctx.font = "20px Arial";
+                    ctx.fillRect(pos[0],pos[1],this.size[0],this.size[1]);
+                    if(mus.x > pos[0] && mus.x < pos[0]+this.size[0]
+                       && mus.y > pos[1] && mus.y < pos[1]+this.size[1]){
+                        ctx.fillStyle = "rgba(0,0,0,0.4)";
+                        ctx.fillRect(pos[0],pos[1],this.size[0],this.size[1]);
+                        if(musTrykk){
+                            nspm = this.peker;
+                            musTrykk = false;
+                        }
+                    }
+                    ctx.fillStyle = "rgba(0,0,0,1)";
+                    ctx.fillText(this.tekst,pos[0]-ctx.measureText(this.tekst).width/2+this.size[1]/2,pos[1]+this.size[1]/2); 
+                } 
+            }
+            
+            class Spm{
+                constructor(tekst, alt1, alt2){
+                    this.tekst = tekst;
+                    this.alt1 = alt1;
+                    this.alt2 = alt2;
+                }
+                
+                skriv(){
+                    let canvas = document.getElementById("canvas");
+                    let ctx = canvas.getContext("2d");
+                    ctx.fillStyle = "rgba(0,0,0,1)";
+                    ctx.font = "20px Arial";
+                    ctx.fillText(this.tekst,canvas.width/2-ctx.measureText(this.tekst).width/2,50); 
+                    
+                }
+            }
+            
+            let mus = function(){
+                this.x = 0;
+                this.y = 0;
+            }
+            let musTrykk = false;
+            
+            function mouse_pos(event){
+                mus.x = event.clientX;
+                mus.y = event.clientY;
+                mus.x-=8
+                mus.y-=8
+                //document.getElementById("test").innerHTML = mus.x+""+mus.y
+            }
+            let tb = [new TB("Fysikkrommet","rgba(0,200,100,1)",[canvas.width/2,canvas.height-100],1),
+                      new TB("IT-rommet","rgba(0,100,200,1)",[canvas.width/2,canvas.height-100],2),
+                     
+                     new TB("IT-rommet","rgba(0,100,200,1)",[canvas.width/2,canvas.height-100],2),
+                     new TB("Neste","rgba(200,200,200,1)",[canvas.width/2,canvas.height-100],3),
+                     new TB("Snakk med Ane","rgba(0,200,200,1)",[canvas.width/2,canvas.height-100],4),
+                     new TB("Snakk med Nancy","rgba(200,200,0,1)",[canvas.width/2,canvas.height-100],3),
+                     
+                    // Ane 6 
+                      new TB("Jeg vil være med","rgba(200,200,0,1)",[canvas.width/2,canvas.height-100],5), // 6
+                      new TB("Jeg vil ikke være med","rgba(200,200,0,1)",[canvas.width/2,canvas.height-100],4), // 7
+                      new TB("Neste","rgba(200,200,0,1)",[canvas.width/2,canvas.height-100],5) // 8
+                     ]
+            
+            //spm = ["Hva heter du?"]
+            spm = [new Spm("Du våkner opp i en gang, går du til fysikkrommet eller til IT-rommet?",0,1),
+                new Spm("Du våkner opp i en gang, går du til fysikkrommet eller til IT-rommet?",0,1),
+                   //new Spm("Vil du snakke med Håvard eller Steven?",0,1),
+                   new Spm("Du går inn i IT-rommet. Ane og Nancy sitter å jobber på PC. ",3,3),
+                  new Spm("Vil du snakke med Ane eller Nancy?",4,5),
+                   // Ane
+                new Spm("Ane jobber med AI-prosjekt. Vil du være med?",6,7),
+                  new Spm("Ane jobber med å lage \"The Singlularity\", et dataprogram som kan lære og lage nye smartere versjoner av seg selv",8,8)];
+            nspm = 0;
+            function main(){
+                let canvas = document.getElementById("canvas");
+                let ctx = canvas.getContext("2d");
+                ctx.fillStyle = "rgba(255,165,165,1)";
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                tb[spm[nspm].alt1].skriv([0,100])
+                tb[spm[nspm].alt2].skriv([canvas.width/2,100])
+                document.getElementById("test").innerHTML = musTrykk
+                spm[nspm].skriv();
+                ctx.save();  
+                
+                canvas.onclick = function(){
+                     musTrykk = true;
+                }
+                
+                setTimeout(main,30);
+            }
+        </script>
+        
+	</body>
+</html>
